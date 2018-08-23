@@ -1,22 +1,23 @@
 import org.gradle.api.internal.artifacts.ImmutableModuleIdentifierFactory
 import org.gradle.api.internal.artifacts.ivyservice.projectmodule.ProjectPublicationRegistry
 import org.gradle.configuration.project.ProjectConfigurationActionContainer
+import javax.inject.Inject
 import kotlin.jvm.javaClass
 
 description = "A Minecraft Resource Pack build Pipeline"
 version = "0.0.1"
 
-buildscript {
-
-}
-
 plugins {
     id("base")
-    id("resourcepack")
+    `kotlin-dsl`
+    `java-gradle-plugin`
 }
 
-resourcepack {
-    out = "rp-out"
-    zipOut = "rp-out"
-    src = "rp"
+gradlePlugin {
+    (plugins) {
+        "resourcepack" {
+            id = "resourcepack"
+            implementationClass = "au.id.rleach.resourcepack.ResourcePackPlugin"
+        }
+    }
 }
