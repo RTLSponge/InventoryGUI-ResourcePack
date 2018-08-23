@@ -3,6 +3,8 @@ package au.id.rleach.resourcepack
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Zip
 
 import org.gradle.kotlin.dsl.*
@@ -30,23 +32,18 @@ class ResourcePackPlugin : Plugin<Project> {
 
         target.run {
             tasks {
-                create("cleanRP") {
+
+                val cleanRP by creating(Delete::class) {
                     group = rpGroup
                     description = "deletes all files in output directory"
-                    for (file in target.fileTree(ext.out))
-                        if (file.exists()) {
-                            logger.log(LogLevel.WARN, "Deleting: ${file.absolutePath}")
-                            delete(file)
-                        }
+                    delete = setOf(target.file(ext.out))
                 }
 
-                create("buildRP"){
+                val buildRP by creating(Copy::class) {
                     group = rpGroup
                     description = "Runs Preprocessors + copys to output directory"
-                    copy {
-                        from(ext.src)
-                        into(ext.out+"/${project.name}")
-                    }
+                    from(ext.src)
+                    into(ext.out+"/${project.name}")
                 }
 
                 val zip by creating(Zip::class) {
