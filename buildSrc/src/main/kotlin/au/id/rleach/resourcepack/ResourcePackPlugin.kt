@@ -32,6 +32,7 @@ class ResourcePackPlugin : Plugin<Project> {
             tasks {
                 create("cleanRP") {
                     group = rpGroup
+                    description = "deletes all files in output directory"
                     for (file in target.fileTree(ext.out))
                         if (file.exists()) {
                             logger.log(LogLevel.WARN, "Deleting: ${file.absolutePath}")
@@ -41,6 +42,7 @@ class ResourcePackPlugin : Plugin<Project> {
 
                 create("buildRP"){
                     group = rpGroup
+                    description = "Runs Preprocessors + copys to output directory"
                     copy {
                         from(ext.src)
                         into(ext.out+"/${project.name}")
