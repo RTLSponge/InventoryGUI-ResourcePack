@@ -2,13 +2,11 @@ package au.id.rleach.resourcepack
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Zip
 
 import org.gradle.kotlin.dsl.*
-
 
 open class ResourcePackPluginExtension {
 
@@ -21,6 +19,26 @@ open class ResourcePackPluginExtension {
     }
 }
 
+data class Pack(
+    var pack_format: Int = 3,
+    var description: String = "InventoryGUI ResourcePack"
+)
+
+data class LangProps(var name: String= "", var region: String = "", var bidi: Boolean = false)
+
+data class LangMap(val map: MutableMap<String, LangProps> = mutableMapOf()) {
+    operator fun get(key: String) : LangProps {
+        return map.getOrPut(key){LangProps("key", "", false)}
+    }
+    operator fun set(key: String, value: LangProps) { map[key] = value }
+}
+
+open class MCMeta {
+    var pack : Pack = Pack()
+    var language : LangMap = LangMap()
+
+}
+
 class ResourcePackPlugin : Plugin<Project> {
 
     val rpName = "resourcepack"
@@ -28,7 +46,7 @@ class ResourcePackPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val ext = target.extensions.create(rpName, ResourcePackPluginExtension::class.java, target)
-
+        target.extensions.create("mcmeta", MCMeta::class.java)
 
         target.run {
             tasks {
